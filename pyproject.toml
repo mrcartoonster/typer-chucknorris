@@ -1,0 +1,29 @@
+[project]
+name = "typer-chucknorris"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Evan Baird",email = "evanbaird@evans-mbp.lan"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "typer (>=0.24.1,<0.25.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pyperclip (>=1.11.0,<2.0.0)"
+]
+
+[tool.poetry]
+packages = [{include = "typer_chucknorris", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "pytest-emoji (>=0.2.0,<0.3.0)",
+    "ruff (>=0.15.7,<0.16.0)",
+    "bpython (>=0.26,<0.27)"
+]
