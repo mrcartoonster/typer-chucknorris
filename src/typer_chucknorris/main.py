@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 
-app = typer.Typer()
+app = typer.Typer(rich_markup_mode='rich', no_args_is_help=True)
 
 #TODO Put version snippet below in another file
 
@@ -17,17 +17,33 @@ home = Path('../../pyproject.toml')
 with open(home, mode='br') as v:
     version = tomli.load(v)
 
+@app.callback()
+def callback():
+    """
+    [bold yellow]Chuck Norris Quote dispenser![/bold yellow]
+
+    Passing in the argument [code]chuck[/] to get a bad ass random Chuck Norris quote!
+
+    Passing the option [code]--categories[/] [bold]|[/] [code]-c[/] will list Category quote option to choose from.
+
+    Passing the option [code]--category-select[/] [bold]|[/] [code]-cs[/] and pass in the selected category you want the quote from.
+
+    Passing the option [code]--search[/] [bold]|[/] [code]-s[/] and passing a search time will output a bad ass quote relative to the search term.
+    """
+
+
 def version_callback(value: bool):
     """
     Call back function for project version number
     """
     if value:
-        print(f"Awesome Chuck Norris CLI Version: {version['project']['version']}")
+        # print(f"Awesome Chuck Norris CLI Version: [bold green]{version['project']['version']}[/]")
+        print(f"Awesome Chuck Norris CLI Version: [bold green]{version['project']['version']}[/]")
         raise typer.Exit()
 
 #TODO Everything above in another file.
 
-@app.command()
+@app.command(epilog="In tribute to Chuck Norris :fist:!")
 def chuck(
     random: Annotated[bool, typer.Argument(help='Get random quote')] = True,
     categories: Annotated[bool, typer.Option('--categories', '-c', help='Retrieve a list of available categories.')] = False,
@@ -43,7 +59,7 @@ def chuck(
 
         resp = httpx.get(url='https://api.chucknorris.io/jokes/categories')
 
-        print("\n[bold blue]The categories you can choose from are:[/]\n")
+        print("\nThe categories you can choose from are:\n")
 
         for _ in resp.json():
             print(_)
@@ -58,7 +74,7 @@ def chuck(
 
         norris = chuck['value']
 
-        print(f"[green bold]{norris}[/ green bold]\n")
+        print(f"[bold blue]{norris}[/]\n")
 
     elif search:
 
@@ -68,7 +84,7 @@ def chuck(
 
         norris = chuck['result'][secrets.randbelow(chuck['total'])]['value']
 
-        print(f"[blue bold]{norris}[/ blue bold]\n")
+        print(f"[bold green]{norris}[/]\n")
 
     else:
 
@@ -76,7 +92,9 @@ def chuck(
 
         norris = dict(resp.json())
 
-        print(f"[blue bold]{norris['value']}[/ blue bold]\n")
+        print(f"[bold red]{norris['value']}[/]\n")
+
+
 
 
 if __name__ == "__main__":
