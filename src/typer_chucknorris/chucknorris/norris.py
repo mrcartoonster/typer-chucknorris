@@ -1,25 +1,25 @@
-import sys
 import secrets
+import sys
 from pathlib import Path
 from typing import Annotated
 
-
-import typer
-from rich import print
 import httpx
 import tomli
+import typer
+from rich import print
 
-sys.path.append('/Users/evanbaird/Projects/Projects/typer_chucknorris/src/typer_chucknorris')
+sys.path.append(
+    "/Users/evanbaird/Projects/Projects/typer_chucknorris/src/typer_chucknorris",
+)
 from chucknorris.categories import chuck_completions
 
+app = typer.Typer(rich_markup_mode="rich", no_args_is_help=True)
 
-app = typer.Typer(rich_markup_mode='rich', no_args_is_help=True)
+# TODO Put version snippet below in another file
 
-#TODO Put version snippet below in another file
+home = Path("../../pyproject.toml")
 
-home = Path('../../pyproject.toml')
-
-with open(home, mode='br') as v:
+with open(home, mode="br") as v:
     version = tomli.load(v)
 
 
@@ -29,27 +29,61 @@ def version_callback(value: bool):
     """
     if value:
         # print(f"Awesome Chuck Norris CLI Version: [bold green]{version['project']['version']}[/]")
-        print(f"Awesome Chuck Norris CLI Version: [bold green]{version['project']['version']}[/]")
+        print(
+            f"Awesome Chuck Norris CLI Version: [bold green]{version['project']['version']}[/]",
+        )
         raise typer.Exit()
 
-#TODO Everything above in another file.
 
-@app.command(epilog="[bold]In tribute to [link=https://www.imdb.com/title/tt0090927/]Chuck Norris[/link][/] :fist:!")
+# TODO Everything above in another file.
+
+
+@app.command(
+    epilog="[bold]In tribute to [link=https://www.imdb.com/title/tt0090927/]Chuck Norris[/link][/] :fist:!",
+)
 def chuck(
-    random: Annotated[bool, typer.Argument(help='Get random quote')] = True,
-    categories: Annotated[bool, typer.Option('--categories', '-c', rich_help_panel='Options', help='Retrieve a list of available categories.')] = False,
+    random: Annotated[
+        bool,
+        typer.Argument(help="Get random quote"),
+    ] = True,
+    categories: Annotated[
+        bool,
+        typer.Option(
+            "--categories",
+            "-c",
+            rich_help_panel="Options",
+            help="Retrieve a list of available categories.",
+        ),
+    ] = False,
     category_select: Annotated[
         str,
         typer.Option(
-            '--category-select',
-            '-cs',
-            rich_help_panel='Options',
-            help='Select category and retrieve a quote from the entered category',
+            "--category-select",
+            "-cs",
+            rich_help_panel="Options",
+            help="Select category and retrieve a quote from the entered category",
             autocompletion=chuck_completions,
-        )
+        ),
     ] = "",
-    search: Annotated[str, typer.Option('--search', '-s', rich_help_panel='Options', help='Free text search to find relavent joke')] = "",
-    version: Annotated[bool | None, typer.Option("--version", "-v", rich_help_panel='Options', callback=version_callback, is_eager=True)] = None,
+    search: Annotated[
+        str,
+        typer.Option(
+            "--search",
+            "-s",
+            rich_help_panel="Options",
+            help="Free text search to find relavent joke",
+        ),
+    ] = "",
+    version: Annotated[
+        bool | None,
+        typer.Option(
+            "--version",
+            "-v",
+            rich_help_panel="Options",
+            callback=version_callback,
+            is_eager=True,
+        ),
+    ] = None,
 ):
     """
     Get a random bad a$$ Chuck Norris quote from the CLI!!!
@@ -57,7 +91,9 @@ def chuck(
 
     if categories:
 
-        resp = httpx.get(url='https://api.chucknorris.io/jokes/categories')
+        resp = httpx.get(
+            url="https://api.chucknorris.io/jokes/categories",
+        )
 
         print("\nThe categories you can choose from are:\n")
 
@@ -68,34 +104,42 @@ def chuck(
 
     elif category_select:
 
-        resp = httpx.get(url='https://api.chucknorris.io/jokes/random', params={'category': category_select})
+        resp = httpx.get(
+            url="https://api.chucknorris.io/jokes/random",
+            params={"category": category_select},
+        )
 
-        chuck  = dict(resp.json())
+        chuck = dict(resp.json())
 
-        norris = chuck['value']
+        norris = chuck["value"]
 
         print(f"[bold blue]{norris}[/]\n")
 
     elif search:
 
-        resp = httpx.get(url='https://api.chucknorris.io/jokes/search', params={'query': search})
+        resp = httpx.get(
+            url="https://api.chucknorris.io/jokes/search",
+            params={"query": search},
+        )
 
-        chuck  = dict(resp.json())
+        chuck = dict(resp.json())
 
-        norris = chuck['result'][secrets.randbelow(chuck['total'])]['value']
+        norris = chuck["result"][secrets.randbelow(chuck["total"])][
+            "value"
+        ]
 
         print(f"[bold green]{norris}[/]\n")
 
     else:
 
-        resp = httpx.get(url='https://api.chucknorris.io/jokes/random')
+        resp = httpx.get(url="https://api.chucknorris.io/jokes/random")
 
         norris = dict(resp.json())
 
         print(f"[bold red]{norris['value']}[/]\n")
 
 
-#TODO: We'll see if we can add this back...
+# TODO: We'll see if we can add this back...
 #   @app.callback()
 #   def callback():
 #       """
