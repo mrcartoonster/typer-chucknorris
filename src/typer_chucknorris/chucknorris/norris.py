@@ -1,23 +1,20 @@
 import secrets
-import sys
 from pathlib import Path
 from typing import Annotated
 
 import httpx
 import tomli
 import typer
-from rich import print
-
-sys.path.append(
-    "/Users/evanbaird/Projects/Projects/typer_chucknorris/src/typer_chucknorris",
-)
 from chucknorris.categories import chuck_completions
+from rich import print
 
 app = typer.Typer(rich_markup_mode="rich", no_args_is_help=True)
 
 # TODO Put version snippet below in another file
 
-home = Path("../../pyproject.toml")
+home = Path(
+    "/Users/evanbaird/Projects/Projects/typer_chucknorris/pyproject.toml",
+)
 
 with open(home, mode="br") as v:
     version = tomli.load(v)
